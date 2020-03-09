@@ -1,0 +1,5 @@
+.DS_Store
+.vscode/settings.json
+pkghome/
+__pycache__/
+.vscode/launch.json
