@@ -3,7 +3,7 @@
 """
 @author: Jiawei Wu
 @create time: 2020-01-16 10:00
-@edit time: 2020-03-12 16:15
+@edit time: 2020-03-12 16:18
 @FilePath: /asv_env.py
 """
 from asv_dynamic import ASV
@@ -70,6 +70,11 @@ class ASVEnv(gym.Env):
         return False
 
     def step(self, action):
+        """执行动作，获取奖励和新的状态
+        在获得action之后，让asv根据asv移动
+        奖励应该是对于当前aim（即执行action的aim），以及移动以后的asv计算
+        状态则应该是对应下一个aim（即实际aim），以及移动后的asv计算
+        """
         if self.action_type == 'velocity':
             self.asv.velocity = action
         elif self.action_type == 'acceleration':
@@ -77,9 +82,6 @@ class ASVEnv(gym.Env):
         else:
             raise TypeError("不在列表中的动作类型")
 
-        # 注意因为reset中已经让aim移动，因此aim永远是asv要追逐的点
-        # 在获得action之后，让asv根据asv移动
-        # 奖励应该是对于当前aim，以及移动以后的asv计算
         # 让asv移动，则当前asv坐标更新为移动后的坐标
         cur_asv = self.asv.move()
         # 注意奖励永远是根据当前aim坐标和当前asv坐标计算，当前aim尚未移动
