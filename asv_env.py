@@ -3,7 +3,7 @@
 """
 @author: Jiawei Wu
 @create time: 2020-01-16 10:00
-@edit time: 2020-03-12 16:18
+@edit time: 2020-03-12 16:28
 @FilePath: /asv_env.py
 """
 from asv_dynamic import ASV
@@ -20,12 +20,12 @@ class ASVEnv(gym.Env):
     使用一个asv去追逐一个点
     """
 
-    def __init__(self, action_type='velocity', interval=0.1):
+    def __init__(self, aim_type='linear', action_type='velocity', interval=0.1):
         self.action_type = action_type
         self.asv = ASV(interval)
         self.interval = 0.1
         self.playground_shape = (600, 600)
-        self.aim = MovePoint("func_sin")
+        self.aim = MovePoint(aim_type)
 
         plt.ion()
         self.aim_his = [self.aim.position]
