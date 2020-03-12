@@ -3,8 +3,8 @@
 """
 @author: Jiawei Wu
 @create time: 2020-01-16 10:00
-@edit time: 2020-03-09 16:39
-@FilePath: /asv/asv_env.py
+@edit time: 2020-03-12 16:15
+@FilePath: /asv_env.py
 """
 from asv_dynamic import ASV
 from move_point import MovePoint
@@ -35,7 +35,13 @@ class ASVEnv(gym.Env):
         self.action_space = spaces.Box(low=0, high=120, shape=(2,))
 
     def reset(self):
+        """重设环境状态
+        将目标点重置到(0, 0)之后，获取下一个目标点
+        将船只重置为(0, 0)
+        reset返回的state是当前点与目标点的差值
+        """
         self.aim.reset()
+        self.aim.next_point(self.interval)
         self.asv.reset_state()
         aim_pos = self.aim.position
         asv_pos = self.asv.position.data
@@ -47,11 +53,15 @@ class ASVEnv(gym.Env):
         return self.get_state()
 
     def get_state(self):
+        """获取当前环境状态，即目标点坐标与船只坐标的差值"""
         asv_pos = self.asv.position.data
         aim_pos = self.aim.position
         return aim_pos - asv_pos
 
     def get_reward(self):
+        """获取当前奖励，即目标点坐标与船只坐标的距离的负值
+        注意距离越大奖励应该越小，所以取负值
+        """
         asv_pos = self.asv.position.data
         aim_pos = self.aim.position
         return -np.sum(np.power((asv_pos - aim_pos), 2))
@@ -67,13 +77,23 @@ class ASVEnv(gym.Env):
         else:
             raise TypeError("不在列表中的动作类型")
 
-        # 记录
-        cur_aim = self.aim.next_point(self.interval)
+        # 注意因为reset中已经让aim移动，因此aim永远是asv要追逐的点
+        # 在获得action之后，让asv根据asv移动
+        # 奖励应该是对于当前aim，以及移动以后的asv计算
+        # 让asv移动，则当前asv坐标更新为移动后的坐标
         cur_asv = self.asv.move()
+        # 注意奖励永远是根据当前aim坐标和当前asv坐标计算，当前aim尚未移动
+        reward = self.get_reward()
+        # 计算完奖励之后，可以移动aim坐标
+        cur_aim = self.aim.next_point(self.interval)
+        # 此时aim已经是下一个要追逐的点，可以计算state
+        state = self.get_state()
+
+        # 记录坐标点，便于绘图
         self.aim_his.append(list(cur_aim))
         self.asv_his.append(list(cur_asv.data))
 
-        return self.get_state(), self.get_reward(), self.get_done(), ''
+        return state, reward, self.get_done(), ''
 
     def render(self):
         plt.clf()
