@@ -43,6 +43,7 @@ def rl_loop(need_load=True):
         START_EPISODE = 0
 
     summary_writer = agent.get_summary_writer()
+    best_cum_reward = -9999
     for e in range(START_EPISODE, MAX_EPISODE):
         cur_state = env.reset()
         cum_reward = 0
@@ -68,18 +69,22 @@ def rl_loop(need_load=True):
 
             cur_state = next_state
             cum_reward += reward
-            if RENDER:
-                env.render()
-                time.sleep(0.1)
+            # if RENDER:
+            #     env.render()
+            #     time.sleep(0.1)
 
             done = done or step == MAX_STEP-1
             if done:
                 print(f'episode: {e}, cum_reward: {cum_reward}', flush=True)
-                if cum_reward < 1:
-                    RENDER = True
+                # if cum_reward < 1:
+                #     RENDER = True
                 break
         summary_writer.add_scalar('cum_reward', cum_reward, e)
         agent.save(e)   # 保存网络参数  
+        
+        # 保存最佳
+        if cum_reward > best_cum_reward:
+            agent.save_best(e)
 
 if __name__ == '__main__':
     rl_loop()

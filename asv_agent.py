@@ -57,6 +57,17 @@ class DDPG(DDPGBase):
             'learn_step': self.learn_step
         }
         torch.save(state, './drlte.pth')
+        
+    def save_best(self, episode):
+        state = {
+            'actor_eval_net': self.actor_eval.state_dict(),
+            'actor_target_net': self.actor_target.state_dict(),
+            'critic_eval_net': self.critic_eval.state_dict(),
+            'critic_target_net': self.critic_target.state_dict(),
+            'episode': episode,
+            'learn_step': self.learn_step
+        }
+        torch.save(state, './best_asv.pth')
 
     # TODO 将方法固定到基类
     def load(self):
