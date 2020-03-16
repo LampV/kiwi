@@ -14,6 +14,7 @@ import time
 from asv_agent import DDPG
 import os
 import json
+import platform
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 
@@ -69,15 +70,16 @@ def rl_loop(need_load=True):
 
             cur_state = next_state
             cum_reward += reward
-            # if RENDER:
-            #     env.render()
-            #     time.sleep(0.1)
+            if RENDER:
+                env.render()
+                time.sleep(0.1)
 
             done = done or step == MAX_STEP-1
             if done:
                 print(f'episode: {e}, cum_reward: {cum_reward}', flush=True)
-                # if cum_reward < 1:
-                #     RENDER = True
+                # 在Linux平台上始终不开启RENDER
+                if cum_reward > 0.1 and platform.system() != 'Linux':
+                    RENDER = True
                 break
         summary_writer.add_scalar('cum_reward', cum_reward, e)
         agent.save(e)   # 保存网络参数  
