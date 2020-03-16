@@ -29,7 +29,7 @@ class ASVEnv(gym.Env):
 
         plt.ion()
         self.aim_his = [self.aim.position]
-        self.asv_his = [self.asv.position.data]
+        self.asv_his = [self.asv.position]
 
         self.observation_space = spaces.Box(low=0, high=600, shape=(2,))
         self.action_space = spaces.Box(low=0, high=120, shape=(2,))
@@ -44,7 +44,7 @@ class ASVEnv(gym.Env):
         self.aim.next_point(self.interval)
         self.asv.reset_state()
         aim_pos = self.aim.position
-        asv_pos = self.asv.position.data
+        asv_pos = self.asv.position
         self.aim_his = [list(aim_pos)]
         self.asv_his = [list(asv_pos)]
         plt.ioff()
@@ -54,7 +54,7 @@ class ASVEnv(gym.Env):
 
     def get_state(self):
         """获取当前环境状态，即目标点坐标与船只坐标的差值"""
-        asv_pos = self.asv.position.data
+        asv_pos = self.asv.position
         aim_pos = self.aim.position
         return aim_pos - asv_pos
 
@@ -62,7 +62,7 @@ class ASVEnv(gym.Env):
         """获取当前奖励，即目标点坐标与船只坐标的距离的负值
         注意距离越大奖励应该越小，所以取负值
         """
-        asv_pos = self.asv.position.data
+        asv_pos = self.asv.position
         aim_pos = self.aim.position
         return -np.sum(np.power((asv_pos - aim_pos), 2))
 
@@ -93,7 +93,7 @@ class ASVEnv(gym.Env):
 
         # 记录坐标点，便于绘图
         self.aim_his.append(list(cur_aim))
-        self.asv_his.append(list(cur_asv.data))
+        self.asv_his.append(list(cur_asv))
 
         return state, reward, self.get_done(), ''
 

@@ -59,7 +59,7 @@ class ASV(object):
 
     @property
     def position(self):
-        return self.__position
+        return self.__position.data
 
     def reset_state(self):
         """重设潜艇位置、速度、加速度为(0, 0)"""
@@ -117,7 +117,7 @@ class ASV(object):
         分别对于x和y两个方向，计算位移
         """
         pt = self.time_interval
-        cur_pos = self.position
+        cur_pos = self.__position
         v_cur, a_cur = self.velocity, self.acceleration
         v_max = self.max_velocity
 
