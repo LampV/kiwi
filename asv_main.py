@@ -39,7 +39,7 @@ def rl_loop(need_load=True):
     agent = DDPG(s_dim, a_dim, a_bound, MAX_MEM=10000, MIN_MEM=64, BATCH_SIZE=32)
     # agent = RandAgent()
     if need_load:
-        START_EPISODE = agent.load()
+        START_EPISODE = agent.load('best_asv.pth')
     else:
         START_EPISODE = 0
 

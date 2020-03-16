@@ -70,12 +70,12 @@ class DDPG(DDPGBase):
         torch.save(state, './best_asv.pth')
 
     # TODO 将方法固定到基类
-    def load(self):
+    def load(self, filename):
         print('\033[1;31;40m{}\033[0m'.format('加载模型参数...'))
-        if not os.path.exists('drlte.pth'):
+        if not os.path.exists(filename):
             print('\033[1;31;40m{}\033[0m'.format('没找到保存文件'))
             return 0
-        saved_state = torch.load("./drlte.pth", map_location=torch.device('cpu'))
+        saved_state = torch.load(filename, map_location=torch.device('cpu'))
         self.actor_eval.load_state_dict(saved_state['actor_eval_net'])
         self.actor_target.load_state_dict(saved_state['actor_target_net'])
         self.critic_eval.load_state_dict(saved_state['critic_eval_net'])
