@@ -7,7 +7,7 @@
 @FilePath: /asv/asv_main.py
 """
 
-from asv_env import ASVEnv
+from jasv import ASVEnv
 import numpy as np
 import matplotlib.pyplot as plt
 import time
