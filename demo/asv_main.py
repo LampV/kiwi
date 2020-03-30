@@ -60,7 +60,7 @@ def rl_loop(need_load=True):
             reward = float(reward / 10000)
             
             agent.add_step(cur_state, action, reward, done, next_state)
-            agent.learn_batch()
+            agent.learn()
             
             info = {
                     "cur_state": list(cur_state), "action": list(action),
@@ -86,7 +86,7 @@ def rl_loop(need_load=True):
         
         # 保存最佳
         if cum_reward > best_cum_reward:
-            agent.save_best(e)
+            agent.save(e, 'best_asv.pth')
 
 if __name__ == '__main__':
     rl_loop()
